@@ -8,7 +8,7 @@ It is assumed that the user has already acquired a working Docker installation. 
 ## Command
 With this image, you can create a new PaperMC Minecraft server with one command (note that running said command indicates agreement to the Minecraft EULA). Here is an example:
 
-```sudo docker run -p 25565:25565 -e EULA="true" phyremaster/papermc```
+```sudo docker run -p 25565:25565 -e EULA="true" richtigerbot/papermc```
 
 While this command will work just fine in many cases, it is only the bare minimum required to start a functional server and can be vastly improved by specifying some...
 ## Options
@@ -68,6 +68,12 @@ Environment variables are options that are specified in the format `-e <NAME>="<
   - Must be formatted as a number followed by `M` for "Megabytes" or `G` for "Gigabytes".
   - If this is not set, Java allocates its own RAM based on total system/container RAM.
   - `-e MC_RAM="<4G>"`
+- Local .jar support
+  - **Name:** `LOCAL_JAR`
+  - Set this to enable local .jar support.
+  - If set the script searches for a `paper-<MC_VERSION>-<PAPER_BUILD>.jar` in the working directory (/papermc).
+  - This file must be present in the volume or path (e.g `-v </path/to/files>:/papermc`).
+  - `-e LOCAL_JAR="false"`
 - Java options
   - **Name:** `JAVA_OPTS`
   - **ADVANCED USERS ONLY**

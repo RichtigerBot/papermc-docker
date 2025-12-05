@@ -11,29 +11,46 @@ cd papermc
 MC_VERSION="${MC_VERSION,,}"
 PAPER_BUILD="${PAPER_BUILD,,}"
 
-# Get version information and build download URL and jar name
-URL='https://papermc.io/api/v2/projects/paper'
-if [[ $MC_VERSION == latest ]]
+echo "DEBUG: $LOCAL_JAR"
+# Check for online or local jar
+if [[ $LOCAL_JAR == true ]]
 then
-  # Get the latest MC version
-  MC_VERSION=$(wget -qO - "$URL" | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
-fi
-URL="${URL}/versions/${MC_VERSION}"
-if [[ $PAPER_BUILD == latest ]]
-then
-  # Get the latest build
-  PAPER_BUILD=$(wget -qO - "$URL" | jq '.builds[-1]')
-fi
-JAR_NAME="paper-${MC_VERSION}-${PAPER_BUILD}.jar"
-URL="${URL}/builds/${PAPER_BUILD}/downloads/${JAR_NAME}"
+  JAR_NAME="paper-${MC_VERSION}-${PAPER_BUILD}.jar"
 
-# Update if necessary
-if [[ ! -e $JAR_NAME ]]
-then
-  # Remove old server jar(s)
-  rm -f *.jar
-  # Download new server jar
-  wget "$URL" -O "$JAR_NAME"
+  # Check if file exists in working directory
+  if [[ -f "./$JAR_NAME" ]]
+  then
+    echo "using $JAR_NAME"
+  else
+    echo "ERROR: ${JAR_NAME} not found. Make sure to move the paper.jar into the papermc directory."
+    echo "DEBUG: MC_VERSION: ${MC_VERSION}, PAPER_BUILD: ${PAPER_BUILD}"
+    exit 1
+  fi
+else
+  # Get version information and build download URL and jar name
+  URL='https://papermc.io/api/v2/projects/paper'
+  if [[ $MC_VERSION == latest ]]
+  then
+    # Get the latest MC version
+    MC_VERSION=$(wget -qO - "$URL" | jq -r '.versions[-1]') # "-r" is needed because the output has quotes otherwise
+  fi
+  URL="${URL}/versions/${MC_VERSION}"
+  if [[ $PAPER_BUILD == latest ]]
+  then
+    # Get the latest build
+    PAPER_BUILD=$(wget -qO - "$URL" | jq '.builds[-1]')
+  fi
+  JAR_NAME="paper-${MC_VERSION}-${PAPER_BUILD}.jar"
+  URL="${URL}/builds/${PAPER_BUILD}/downloads/${JAR_NAME}"
+
+  # Update if necessary
+  if [[ ! -e $JAR_NAME ]]
+  then
+    # Remove old server jar(s)
+    rm -f *.jar
+    # Download new server jar
+    wget "$URL" -O "$JAR_NAME"
+  fi
 fi
 
 # Update eula.txt with current setting

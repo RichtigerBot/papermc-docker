@@ -8,6 +8,7 @@ ENV MC_VERSION="latest" \
     PAPER_BUILD="latest" \
     EULA="false" \
     MC_RAM="" \
+    LOCAL_JAR="false" \
     JAVA_OPTS=""
 
 COPY papermc.sh .
